@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFix Kampüs | Yapay Zeka Destekli Arıza Bildirimi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: rgba(30, 27, 75, 0.5);
+            /* Deep Indigo */
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            background-image: radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), transparent 40%),
+                radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.1), transparent 40%);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            color: var(--text-main);
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            box-sizing: border-box;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+            color: #818cf8;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            text-shadow: 0 0 20px rgba(129, 140, 248, 0.3);
+        }
+
+        .header p {
+            margin: 10px 0 0;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            color: var(--text-main);
+            background: rgba(15, 23, 42, 0.6);
+            transition: var(--transition);
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.9);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #64748b;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Dosya Yükleme Drop Zone */
+        .drop-zone {
+            width: 100%;
+            padding: 30px 20px;
+            border: 2px dashed rgba(99, 102, 241, 0.5);
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.4);
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: #818cf8;
+            box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .drop-zone input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .drop-zone-text {
+            color: #818cf8;
+            font-weight: 500;
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        .drop-zone-sub {
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-top: 5px;
+            pointer-events: none;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+            transform: translateY(-1px);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .btn-submit:disabled {
+            background: #475569;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Sonuç Kartı Fade-in-up */
+        .result-box {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-box h3 {
+            margin: 0 0 10px 0;
+            font-size: 20px;
+        }
+
+        .ai-score-circle {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            margin-top: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            transition: var(--transition);
+        }
+
+        /* Neon Aura için Pulse */
+        @keyframes pulseAura {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+
+        .pulse-danger {
+            animation: pulseAura 2s infinite;
+        }
+
+        .toast-error {
+            display: none;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-bottom: 24px;
+            text-align: center;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <div class="header">
+            <h1>🛠️ SmartFix Kampüs</h1>
+            <p>Yapay Zeka Destekli Arıza Bildirim Sistemi</p>
+        </div>
+
+        <div id="error-message" class="toast-error">Lütfen zorunlu alanları doldurun.</div>
+
+        <div class="form-group">
+            <label for="baslik">Arıza Başlığı</label>
+            <input type="text" id="baslik" placeholder="Örn: Rektörlük Binası Su Borusu Patlağı" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+            <label for="aciklama">Arıza Detayı</label>
+            <textarea id="aciklama"
+                placeholder="Durumu detaylıca açıklayın. Yapay zeka yazdığınız metni analiz ederek aciliyet skoru belirleyecektir..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>📸 Fotoğraf (İsteğe Bağlı)</label>
+            <div class="drop-zone" id="dropZone">
+                <input type="file" id="foto" accept="image/png, image/jpeg">
+                <div class="drop-zone-text">📸 Dosyayı sürükleyin veya seçmek için tıklayın</div>
+                <div class="drop-zone-sub" id="fileName">Henüz dosya seçilmedi</div>
+            </div>
+        </div>
+
+        <button id="submitBtn" class="btn-submit" onclick="gonderAI()">
+            <span class="spinner" id="btnSpinner"></span>
+            <span id="btnText">Yapay Zeka ile Analiz Et & Gönder</span>
+        </button>
+
+        <div id="resultBox" class="result-box">
+            <h3 id="resultTitle">Kayıt Başarılı!</h3>
+            <p style="color: var(--text-muted); font-size: 14px;">Arızanız sisteme işlendi. Yapay Zeka Aciliyet Skoru:
+            </p>
+            <div id="aiScore" class="ai-score-circle">10</div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 20px;">Teknik ekip en kısa sürede
+                yönlendirilecektir.</p>
+        </div>
+    </div>
+
+    <script>
+        // Dosya sürükle bırak ve isim gösterme mantığı
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('foto');
+        const fileNameDisplay = document.getElementById('fileName');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
+        });
+
+        fileInput.addEventListener('change', function (e) {
+            if (this.files && this.files.length > 0) {
+                fileNameDisplay.innerHTML = `<span style="color: #6ee7b7;">✓ ${this.files[0].name}</span>`;
+                dropZone.style.borderColor = '#6ee7b7';
+            } else {
+                fileNameDisplay.innerText = "Henüz dosya seçilmedi";
+                dropZone.style.borderColor = 'rgba(99, 102, 241, 0.5)';
+            }
+        });
+
+        async function gonderAI() {
+            const baslik = document.getElementById('baslik').value.trim();
+            const aciklama = document.getElementById('aciklama').value.trim();
+            const errorMsg = document.getElementById('error-message');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnSpinner = document.getElementById('btnSpinner');
+            const btnText = document.getElementById('btnText');
+            const resultBox = document.getElementById('resultBox');
+
+            if (!baslik || !aciklama) {
+                errorMsg.style.display = 'block';
+                return;
+            }
+            errorMsg.style.display = 'none';
+
+            submitBtn.disabled = true;
+            btnSpinner.style.display = 'inline-block';
+            btnText.innerText = 'Yapay Zeka Analiz Ediyor...';
+
+            // Animasyonu sıfırlamak için display none yapıp ufak bir gecikme verelim
+            resultBox.style.animation = 'none';
+            resultBox.style.opacity = '0';
+            resultBox.style.display = 'none';
+
+            // JSON yerine FormData objesi oluştur (Dosya (Multipart) göndermek için şart)
+            const formData = new FormData();
+            formData.append('baslik', baslik);
+            formData.append('aciklama', aciklama);
+
+            // Öğrenci e-postasını alıp ekleme
+            const email = localStorage.getItem('ogrenciEmail') || 'Bilinmiyor';
+            formData.append('ogrenciEmail', email);
+
+            // Fotoğraf seçilmişse FormData'ya ekle
+            if (fileInput.files.length > 0) {
+                formData.append('foto', fileInput.files[0]);
+            }
+
+            try {
+                // FormData gönderilirken "Content-Type" tarayıcı tarafından otomatik (boundary ile) ayarlanır
+                const response = await fetch('http://localhost:8080/api/issues/ekle', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error("Sunucu hatası");
+
+                const data = await response.json();
+                const score = data.aiAciliyetSkoru;
+                const scoreCircle = document.getElementById('aiScore');
+                const resultTitle = document.getElementById('resultTitle');
+
+                // Fade in up animasyonunu tekrar tetikleme
+                resultBox.style.display = 'block';
+                setTimeout(() => { resultBox.style.animation = 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards'; }, 10);
+
+                scoreCircle.innerText = score;
+                scoreCircle.classList.remove('pulse-danger'); // reset
+                scoreCircle.style.boxShadow = '0 0 20px rgba(0,0,0,0.3)';
+
+                if (score >= 8) {
+                    resultBox.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+                    resultBox.style.boxShadow = 'inset 0 0 30px rgba(239, 68, 68, 0.05)';
+                    resultTitle.style.color = '#fca5a5';
+                    resultTitle.innerText = '🚨 Kritik Arıza Kaydedildi!';
+                    scoreCircle.style.background = 'linear-gradient(135deg, #ef4444, #b91c1c)';
+                    scoreCircle.classList.add('pulse-danger');
+                } else if (score >= 5) {
+                    resultBox.style.border = '1px solid rgba(245, 158, 11, 0.3)';
+                    resultBox.style.boxShadow = 'inset 0 0 30px rgba(245, 158, 11, 0.05)';
+                    resultTitle.style.color = '#fcd34d';
+                    resultTitle.innerText = '⚠️ Orta Düzey Arıza Kaydedildi';
+                    scoreCircle.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+                } else {
+                    resultBox.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+                    resultBox.style.boxShadow = 'inset 0 0 30px rgba(16, 185, 129, 0.05)';
+                    resultTitle.style.color = '#6ee7b7';
+                    resultTitle.innerText = '✅ Düşük Öncelikli Kayıt';
+                    scoreCircle.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                }
+
+                document.getElementById('baslik').value = '';
+                document.getElementById('aciklama').value = '';
+                fileInput.value = '';
+                fileNameDisplay.innerText = "Henüz dosya seçilmedi";
+                dropZone.style.borderColor = 'rgba(99, 102, 241, 0.5)';
+
+            } catch (error) {
+                console.error("Hata:", error);
+                errorMsg.innerText = "Sunucuya bağlanılamadı. Backend'in çalıştığından emin olun.";
+                errorMsg.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                btnSpinner.style.display = 'none';
+                btnText.innerText = 'Yapay Zeka ile Analiz Et & Gönder';
+            }
+        }
+    </script>
+</body>
+
+</html>

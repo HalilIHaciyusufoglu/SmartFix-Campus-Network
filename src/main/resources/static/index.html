@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFix Kampüs | Giriş</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: rgba(30, 27, 75, 0.5); /* Deep Indigo */
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --danger: #ef4444;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Custom Dark Mode Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-dark);
+            background-image: radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), transparent 40%),
+                              radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.1), transparent 40%);
+            display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; margin: 0; color: var(--text-main); 
+        }
+
+        /* Glassmorphic Login Box */
+        .login-box { 
+            background: var(--card-bg); 
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 40px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1); 
+            width: 100%; max-width: 380px; text-align: center; 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+        }
+        
+        .login-box:hover {
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        h2 { margin-top: 0; color: #818cf8; font-weight: 700; letter-spacing: -0.5px; font-size: 26px; text-shadow: 0 0 20px rgba(129, 140, 248, 0.3); }
+        
+        input { 
+            width: 100%; padding: 14px 16px; margin: 12px 0; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 10px; 
+            background: rgba(15, 23, 42, 0.6); 
+            color: var(--text-main); 
+            box-sizing: border-box; 
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            transition: var(--transition);
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.9);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+        }
+        
+        input::placeholder { color: #64748b; }
+
+        button { 
+            width: 100%; padding: 14px; 
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover)); 
+            color: white; border: none; border-radius: 10px; 
+            font-weight: 600; font-size: 16px; letter-spacing: 0.5px;
+            cursor: pointer; margin-top: 20px; 
+            transition: var(--transition); 
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+        
+        button:hover { 
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6); 
+            transform: translateY(-1px);
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .info { font-size: 13px; color: var(--text-muted); margin-top: 24px; line-height: 1.6; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .info b { color: #cbd5e1; }
+        
+        #hata-mesaji { 
+            color: #fca5a5; font-size: 14px; margin-top: 15px; display: none; font-weight: 500; 
+            background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 8px; border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        /* Hata Shake Animasyonu */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+        .shake { animation: shake 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+    </style>
+</head>
+<body>
+
+<div class="login-box">
+    <h2>🛠️ SmartFix Kampüs</h2>
+    <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 25px;">Yapay Zeka Destekli Arıza Yönetimi</p>
+
+    <input type="email" id="email" placeholder="E-Posta (Örn: ad@inonu.edu.tr)" autocomplete="email">
+    <input type="password" id="sifre" placeholder="Şifre (Sadece Yöneticiler)" autocomplete="current-password">
+
+    <button onclick="girisYap()">Sisteme Giriş Yap</button>
+
+    <div id="hata-mesaji"></div>
+
+    <div class="info">
+        * Öğrenciler <b>.edu.tr</b> uzantılı e-postaları ile şifre girmeden arıza bildirebilir.<br><br>
+        * Yöneticiler kayıtlı e-posta ve şifreleri ile admin paneline yönlendirilir.
+    </div>
+</div>
+
+<script>
+    async function girisYap() {
+        const email = document.getElementById('email').value.trim().toLowerCase();
+        const sifre = document.getElementById('sifre').value;
+        const hataMesaji = document.getElementById('hata-mesaji');
+        const loginBox = document.querySelector('.login-box');
+
+        hataMesaji.style.display = 'none';
+        hataMesaji.classList.remove('shake');
+
+        if (!email) {
+            hataMesaji.innerText = "Lütfen e-posta adresinizi girin!";
+            hataMesaji.style.display = 'block';
+            hataMesaji.classList.add('shake');
+            return;
+        }
+
+        // 1. ÖĞRENCİ KONTROLÜ: Eğer admin DEĞİLSE ve .edu.tr uzantılıysa direkt içeri al
+        const isAdmin = email.includes("admin");
+        
+        if (!isAdmin && email.includes("edu.tr")) {
+            localStorage.setItem('ogrenciEmail', email);
+            window.location.href = '/ariza-bildir.html';
+            return;
+        }
+
+        // 2. YÖNETİCİ KONTROLÜ (Veya admin kelimesi geçenler): Direkt Java (Backend) API'sine istek at
+        try {
+            const response = await fetch('http://localhost:8080/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email, sifre: sifre })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                hataMesaji.innerText = data.error || "Giriş başarısız! E-posta veya şifre hatalı.";
+                hataMesaji.style.display = 'block';
+                
+                // Shake animasyonunu tetiklemek için reflow tekniği
+                void hataMesaji.offsetWidth; 
+                hataMesaji.classList.add('shake');
+            } else {
+                localStorage.setItem('ogrenciEmail', email);
+                
+                if (data.rol === 'admin') {
+                    window.location.href = '/admin.html';
+                } else {
+                    window.location.href = '/ariza-bildir.html';
+                }
+            }
+        } catch (error) {
+            hataMesaji.innerText = "Sunucu bağlantısı koptu. Lütfen sistem yöneticisiyle görüşün.";
+            hataMesaji.style.display = 'block';
+            void hataMesaji.offsetWidth;
+            hataMesaji.classList.add('shake');
+        }
+    }
+
+    document.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") girisYap();
+    });
+</script>
+
+</body>
+</html>
